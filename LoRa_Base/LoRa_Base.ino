@@ -65,7 +65,7 @@ void setup() {
 }
 
 void loop() {
-  // Wait 1 second between transmissions.
+  // Wait .25 seconds between checking for new messages.
   delay(250);
   Serial.println("Listening...");
 
