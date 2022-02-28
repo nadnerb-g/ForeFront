@@ -1,8 +1,8 @@
-/*
+/**
   LoRa Remote Node
     Remote LoRa code that transmits GPS coordinates periodically
     to the base station. 
-*/
+**/
 
 #include <SPI.h>
 #include <RH_RF95.h>
@@ -53,7 +53,7 @@ void setup() {
     //Serial.println("Uncomment '#define SERIAL_DEBUG' in RH_RF95.cpp for detailed debug info");
 
     // setup() can't really fail, so just hang.
-    while (1);
+    while (true);
   }
   Serial.println("LoRa radio successfully initialized.");
 

@@ -1,8 +1,8 @@
-/*
+/**
   LoRa Base Node
     Base LoRa code that receives GPS coordinates periodically
     from multiple remote LoRa nodes. 
-*/
+**/
 
 #include <SPI.h>
 #include <RH_RF95.h>
