@@ -6,6 +6,19 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS++.h>
+
+#define _FEATHER_BOARD
+
+// Serial Pins go GPS_RX -> TX, and GPS_TX -> RX.
+#ifdef _FEATHER_BOARD
+  #define GPS_RX_PIN 6    // TX pin on the base board.
+  #define GPS_TX_PIN 9    // RX pin on the base board.
+#else
+  #define GPS_RX_PIN 6
+  #define GPS_TX_PIN 5
+#endif
 
 // Feather 32u4 specific LoRa pins.
 #define RFM95_CS   8    // Chip Select pin.
@@ -24,6 +37,10 @@ int pkt_id = 0;
 // Radio driver instance.
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
+// Software serial connection to GPS chip.
+SoftwareSerial gpsSerial(GPS_TX_PIN, GPS_RX_PIN);
+TinyGPSPlus gps;
+
 void setup() {
   // Set up pin directions and initially set.
   pinMode(LED_BUILTIN, OUTPUT);
@@ -35,6 +52,13 @@ void setup() {
   // Start the serial connection at 115200 bps.
   Serial.begin(115200);
   while(!Serial) {
+    delay(1);
+  }
+  delay(100);
+
+  // Start the serial connection to GPS at 9600 bps.
+  gpsSerial.begin(9600);
+  while(!gpsSerial) {
     delay(1);
   }
   delay(100);
@@ -84,6 +108,17 @@ void loop() {
   rf95.waitPacketSent();
   Serial.print("Packet sent. ");
   Serial.println(mesg);
+
+  while(gpsSerial.available() > 0) {
+    gps.encode(gpsSerial.read());
+  }
+
+  if (gps.location.isValid()) {
+    Serial.print("LATITUDE: ");
+    Serial.print(gps.location.lat(), 6);
+    Serial.print("    LONGITUDE: ");
+    Serial.println(gps.location.lng(), 6);
+  }
 
   digitalWrite(LED_BUILTIN, LOW);
   pkt_id++;
